@@ -16,6 +16,7 @@ import {
   ShoppingCart,
   ChefHat,
   TrendingDown,
+  FileSpreadsheet,
   Settings
 } from 'lucide-react';
 
@@ -32,14 +33,15 @@ export const NAV_ITEMS = [
   { id: 'cogs' as TabType, label: 'ต้นทุน COGS', icon: ShoppingCart },
   { id: 'menu' as TabType, label: 'เมนู & สูตร', icon: ChefHat },
   { id: 'expenses' as TabType, label: 'ค่าใช้จ่าย', icon: TrendingDown },
+  { id: 'reports' as TabType, label: 'รายงาน P&L', icon: FileSpreadsheet },
   { id: 'settings' as TabType, label: 'ตั้งค่า', icon: Settings },
 ];
 
 export const BottomNav: React.FC<BottomNavProps> = ({ currentTab, onSelectTab }) => {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-stone-200 safe-area-bottom shadow-lg">
-      <div className="max-w-md md:max-w-4xl mx-auto px-1 sm:px-3">
-        <div className="grid grid-cols-6 h-15">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-stone-200 safe-area-bottom shadow-lg print:hidden">
+      <div className="max-w-md md:max-w-4xl mx-auto px-1 sm:px-2">
+        <div className="grid grid-cols-7 h-15">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isActive = currentTab === item.id;
@@ -54,14 +56,14 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentTab, onSelectTab })
                 }`}
               >
                 {isActive && (
-                  <span className="absolute top-0 w-8 h-0.5 bg-emerald-600 rounded-full" />
+                  <span className="absolute top-0 w-6 sm:w-8 h-0.5 bg-emerald-600 rounded-full" />
                 )}
                 <Icon
-                  className={`w-4.5 h-4.5 mb-0.5 transition-transform ${
+                  className={`w-4 h-4 sm:w-4.5 sm:h-4.5 mb-0.5 transition-transform ${
                     isActive ? 'scale-110 text-emerald-600' : 'text-stone-500'
                   }`}
                 />
-                <span className="text-[9.5px] sm:text-[11px] leading-tight tracking-tight text-center truncate px-0.5">
+                <span className="text-[9px] sm:text-[10.5px] leading-tight tracking-tight text-center truncate px-0.5">
                   {item.label}
                 </span>
               </button>

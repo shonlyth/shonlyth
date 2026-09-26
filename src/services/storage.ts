@@ -3,10 +3,403 @@
  * มีระบบตรวจสอบ Schema ความถูกต้องของข้อมูลก่อนนำเข้า
  */
 
-import { RestaurantData, RestaurantSettings } from '../types/restaurant';
+import { RestaurantData, RestaurantSettings, IncomeRecord, ExpenseRecord, CogsRecord } from '../types/restaurant';
 
 export const STORAGE_KEY = 'kinkhorng_restaurant_data_v1';
 export const CURRENT_SCHEMA_VERSION = '1.0.0';
+
+/**
+ * สร้างข้อมูลประวัติย้อนหลัง 12 เดือน (รวมเดือนปัจจุบัน) อย่างสมจริง
+ * สำหรับนำไปวิเคราะห์ในกราฟ % Food Cost 12 เดือน และกราฟเปรียบเทียบกำไรสุทธิ
+ */
+export function generateHistoricalSeedRecords(): {
+  incomes: IncomeRecord[];
+  expenses: ExpenseRecord[];
+  cogsRecords: CogsRecord[];
+} {
+  const now = new Date();
+  const todayStr = now.toISOString().split('T')[0];
+
+  const incomes: IncomeRecord[] = [
+    {
+      id: 'inc_sample_today_1',
+      date: todayStr,
+      time: '12:15',
+      channelId: 'channel_dine_in',
+      channelName: 'หน้าร้าน (Dine-in / รับที่ร้าน)',
+      grossAmount: 3250,
+      commissionRatePercent: 0,
+      commissionAmount: 0,
+      netAmount: 3250,
+      paymentAccountId: 'acc_drawer_cash',
+      orderCount: 42,
+      notes: 'ยอดขายหน้าร้านรอบเที่ยง',
+      createdAt: now.toISOString()
+    },
+    {
+      id: 'inc_sample_today_2',
+      date: todayStr,
+      time: '13:00',
+      channelId: 'channel_lineman',
+      channelName: 'LINE MAN',
+      grossAmount: 2450,
+      commissionRatePercent: 32.1,
+      commissionAmount: 786.45,
+      netAmount: 1663.55,
+      paymentAccountId: 'acc_delivery_wallet',
+      orderCount: 22,
+      notes: 'ออเดอร์ LINE MAN มื้อเที่ยง',
+      createdAt: now.toISOString()
+    },
+    {
+      id: 'inc_sample_today_3',
+      date: todayStr,
+      time: '14:20',
+      channelId: 'channel_grab',
+      channelName: 'GrabFood',
+      grossAmount: 1890,
+      commissionRatePercent: 32.1,
+      commissionAmount: 606.69,
+      netAmount: 1283.31,
+      paymentAccountId: 'acc_delivery_wallet',
+      orderCount: 16,
+      notes: 'ออเดอร์ GrabFood ช่วงบ่าย',
+      createdAt: now.toISOString()
+    }
+  ];
+
+  const expenses: ExpenseRecord[] = [
+    {
+      id: 'exp_sample_today_1',
+      date: todayStr,
+      categoryId: 'exp_raw_material',
+      categoryName: 'ต้นทุนวัตถุดิบอาหารและเครื่องปรุง (Food Cost)',
+      costType: 'variable',
+      title: 'ซื้อเนื้อหมู ไข่ไก่ ผักสด ตลาดเช้า',
+      amount: 1850,
+      paymentAccountId: 'acc_drawer_cash',
+      supplier: 'ตลาดสดเทศบาล',
+      createdAt: now.toISOString()
+    },
+    {
+      id: 'exp_sample_today_2',
+      date: todayStr,
+      categoryId: 'exp_packaging',
+      categoryName: 'ต้นทุนบรรจุภัณฑ์ (Packaging)',
+      costType: 'variable',
+      title: 'ซื้อกล่องข้าวกระดาษ 2 ลัง + ช้อนพลาสติก',
+      amount: 620,
+      paymentAccountId: 'acc_kbank',
+      supplier: 'แม็คโคร',
+      createdAt: now.toISOString()
+    },
+    {
+      id: 'exp_sample_today_3',
+      date: todayStr,
+      categoryId: 'exp_rent',
+      categoryName: 'ค่าเช่าสถานที่ / ค่าแผง',
+      costType: 'fixed',
+      isMonthlyFixed: true,
+      month: todayStr.substring(0, 7),
+      title: 'ค่าเช่าร้านประจำเดือน',
+      amount: 12000,
+      paymentAccountId: 'acc_kbank',
+      createdAt: now.toISOString()
+    },
+    {
+      id: 'exp_sample_today_4',
+      date: todayStr,
+      categoryId: 'exp_gas_ice',
+      categoryName: 'ค่าแก๊สหุงต้ม / น้ำแข็ง',
+      costType: 'variable',
+      title: 'สั่งแก๊ส ปตท. 15 กก. 1 ถัง + น้ำแข็งหลอด',
+      amount: 520,
+      paymentAccountId: 'acc_drawer_cash',
+      createdAt: now.toISOString()
+    }
+  ];
+
+  const cogsRecords: CogsRecord[] = [
+    {
+      id: 'cogs_sample_today_1',
+      date: todayStr,
+      periodType: 'daily',
+      category: 'เนื้อสัตว์',
+      title: 'หมูสับ 10 กก. + อกไก่สด',
+      amount: 1450,
+      supplier: 'เขียงหมูป้าพร',
+      notes: 'เนื้อสัตว์สำหรับรอบเช้า',
+      createdAt: now.toISOString()
+    },
+    {
+      id: 'cogs_sample_today_2',
+      date: todayStr,
+      periodType: 'daily',
+      category: 'ผัก',
+      title: 'กะเพรา พริกขี้หนู แตงกวา ต้นหอม',
+      amount: 320,
+      supplier: 'ร้านผักสดลุงหมาย',
+      createdAt: now.toISOString()
+    },
+    {
+      id: 'cogs_sample_today_3',
+      date: todayStr,
+      periodType: 'weekly',
+      weekEndDate: todayStr,
+      category: 'ของแห้ง',
+      title: 'ข้าวหอมมะลิ 2 กระสอบ (100 กก.)',
+      amount: 3200,
+      supplier: 'โรงสีข้าวเจริญผล',
+      notes: 'สต็อกสำหรับ 1-2 สัปดาห์',
+      createdAt: now.toISOString()
+    }
+  ];
+
+  // โปรไฟล์จำลองย้อนหลัง 12 เดือน (offset 11 = 11 เดือนก่อนหน้า, offset 0 = เดือนปัจจุบัน)
+  const monthlyProfiles = [
+    { offset: 11, grossBase: 195000, foodCostPct: 31.4, festival: 'งานตักบาตรเทโว' },
+    { offset: 10, grossBase: 205000, foodCostPct: 32.0, festival: 'เปิดเทอม 2' },
+    { offset: 9, grossBase: 268000, foodCostPct: 30.5, festival: 'เทศกาลปีใหม่ & ปลายปี' },
+    { offset: 8, grossBase: 215000, foodCostPct: 32.2, festival: 'ต้นปีใหม่' },
+    { offset: 7, grossBase: 202000, foodCostPct: 33.8, festival: 'วาเลนไทน์' },
+    { offset: 6, grossBase: 228000, foodCostPct: 31.6, festival: 'หน้าร้อน' },
+    { offset: 5, grossBase: 275000, foodCostPct: 34.2, festival: 'เทศกาลสงกรานต์' },
+    { offset: 4, grossBase: 218000, foodCostPct: 32.5, festival: 'เปิดเทอมใหญ่' },
+    { offset: 3, grossBase: 212000, foodCostPct: 31.2, festival: 'กลางปี' },
+    { offset: 2, grossBase: 225000, foodCostPct: 32.8, festival: 'วันหยุดยาว ก.ค.' },
+    { offset: 1, grossBase: 220000, foodCostPct: 31.0, festival: 'วันแม่แห่งชาติ' },
+    { offset: 0, grossBase: 198000, foodCostPct: 32.3, festival: 'รอบเดือนปัจจุบัน' },
+  ];
+
+  monthlyProfiles.forEach(({ offset, grossBase, foodCostPct, festival }) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - offset, 15);
+    const mStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const dateStr = `${mStr}-15`;
+
+    const dineGross = Math.round(grossBase * 0.48);
+    const linemanGross = Math.round(grossBase * 0.25);
+    const grabGross = Math.round(grossBase * 0.17);
+    const shopeeGross = Math.round(grossBase * 0.06);
+    const cateringGross = Math.round(grossBase * 0.04);
+
+    const linemanComm = parseFloat((linemanGross * 0.321).toFixed(2));
+    const grabComm = parseFloat((grabGross * 0.321).toFixed(2));
+    const shopeeComm = parseFloat((shopeeGross * 0.321).toFixed(2));
+
+    const totalNet = dineGross + (linemanGross - linemanComm) + (grabGross - grabComm) + (shopeeGross - shopeeComm) + cateringGross;
+
+    incomes.push(
+      {
+        id: `inc_hist_${mStr}_dine`,
+        date: dateStr,
+        time: '18:00',
+        channelId: 'channel_dine_in',
+        channelName: 'หน้าร้าน (Dine-in / รับที่ร้าน)',
+        grossAmount: dineGross,
+        commissionRatePercent: 0,
+        commissionAmount: 0,
+        netAmount: dineGross,
+        paymentAccountId: 'acc_drawer_cash',
+        orderCount: Math.round(dineGross / 75),
+        notes: `ยอดขายหน้าร้านสะสม (${festival})`,
+        createdAt: d.toISOString()
+      },
+      {
+        id: `inc_hist_${mStr}_lm`,
+        date: dateStr,
+        time: '18:30',
+        channelId: 'channel_lineman',
+        channelName: 'LINE MAN',
+        grossAmount: linemanGross,
+        commissionRatePercent: 32.1,
+        commissionAmount: linemanComm,
+        netAmount: linemanGross - linemanComm,
+        paymentAccountId: 'acc_delivery_wallet',
+        orderCount: Math.round(linemanGross / 110),
+        notes: `ยอดขาย LINE MAN สะสม`,
+        createdAt: d.toISOString()
+      },
+      {
+        id: `inc_hist_${mStr}_grab`,
+        date: dateStr,
+        time: '19:00',
+        channelId: 'channel_grab',
+        channelName: 'GrabFood',
+        grossAmount: grabGross,
+        commissionRatePercent: 32.1,
+        commissionAmount: grabComm,
+        netAmount: grabGross - grabComm,
+        paymentAccountId: 'acc_delivery_wallet',
+        orderCount: Math.round(grabGross / 115),
+        notes: `ยอดขาย GrabFood สะสม`,
+        createdAt: d.toISOString()
+      },
+      {
+        id: `inc_hist_${mStr}_shopee`,
+        date: dateStr,
+        time: '19:30',
+        channelId: 'channel_shopee',
+        channelName: 'ShopeeFood',
+        grossAmount: shopeeGross,
+        commissionRatePercent: 32.1,
+        commissionAmount: shopeeComm,
+        netAmount: shopeeGross - shopeeComm,
+        paymentAccountId: 'acc_delivery_wallet',
+        orderCount: Math.round(shopeeGross / 100),
+        notes: `ยอดขาย ShopeeFood สะสม`,
+        createdAt: d.toISOString()
+      },
+      {
+        id: `inc_hist_${mStr}_cat`,
+        date: `${mStr}-20`,
+        time: '11:00',
+        channelId: 'channel_catering',
+        channelName: 'ข้าวกล่องจัดเลี้ยง / พรีออเดอร์',
+        grossAmount: cateringGross,
+        commissionRatePercent: 0,
+        commissionAmount: 0,
+        netAmount: cateringGross,
+        paymentAccountId: 'acc_kbank',
+        orderCount: Math.round(cateringGross / 600),
+        notes: `ออเดอร์จัดเลี้ยงประจำเดือน`,
+        createdAt: d.toISOString()
+      }
+    );
+
+    // COGS วัตถุดิบ
+    const totalCogsTarget = Math.round(totalNet * (foodCostPct / 100));
+    const meatCogs = Math.round(totalCogsTarget * 0.48);
+    const vegCogs = Math.round(totalCogsTarget * 0.16);
+    const dryCogs = Math.round(totalCogsTarget * 0.15);
+    const seasonCogs = Math.round(totalCogsTarget * 0.11);
+    const seafoodCogs = totalCogsTarget - (meatCogs + vegCogs + dryCogs + seasonCogs);
+
+    cogsRecords.push(
+      {
+        id: `cogs_hist_${mStr}_meat`,
+        date: `${mStr}-05`,
+        periodType: 'daily',
+        category: 'เนื้อสัตว์',
+        title: 'หมูสด ไก่สด หมูกรอบ ประจำเดือน',
+        amount: meatCogs,
+        supplier: 'เขียงหมูป้าพร',
+        notes: `ต้นทุนเนื้อสัตว์รอบเดือน`,
+        createdAt: d.toISOString()
+      },
+      {
+        id: `cogs_hist_${mStr}_veg`,
+        date: `${mStr}-10`,
+        periodType: 'daily',
+        category: 'ผัก',
+        title: 'ผักสด คะน้า พริก แตงกวา ใบกะเพรา',
+        amount: vegCogs,
+        supplier: 'ร้านผักสดลุงหมาย',
+        createdAt: d.toISOString()
+      },
+      {
+        id: `cogs_hist_${mStr}_dry`,
+        date: `${mStr}-12`,
+        periodType: 'weekly',
+        category: 'ของแห้ง',
+        title: 'ข้าวสารหอมมะลิ เส้นก๋วยเตี๋ยว แป้ง',
+        amount: dryCogs,
+        supplier: 'โรงสีข้าวเจริญผล',
+        createdAt: d.toISOString()
+      },
+      {
+        id: `cogs_hist_${mStr}_season`,
+        date: `${mStr}-18`,
+        periodType: 'weekly',
+        category: 'เครื่องปรุง',
+        title: 'น้ำมันพืช ซอสปรุงรส ซีอิ๊ว น้ำตาล น้ำปลา',
+        amount: seasonCogs,
+        supplier: 'แม็คโคร',
+        createdAt: d.toISOString()
+      },
+      {
+        id: `cogs_hist_${mStr}_seafood`,
+        date: `${mStr}-22`,
+        periodType: 'daily',
+        category: 'อาหารทะเล',
+        title: 'กุ้งสด หมึกสด ปลากะพง',
+        amount: seafoodCogs,
+        supplier: 'แพปลาสมุทรสาคร',
+        createdAt: d.toISOString()
+      }
+    );
+
+    // ค่าใช้จ่ายคงที่และผันแปร
+    expenses.push(
+      {
+        id: `exp_hist_${mStr}_rent`,
+        date: `${mStr}-01`,
+        month: mStr,
+        isMonthlyFixed: true,
+        categoryId: 'exp_rent',
+        categoryName: 'ค่าเช่าสถานที่ / ค่าแผง',
+        costType: 'fixed',
+        title: `ค่าเช่าร้านประจำเดือน ${mStr}`,
+        amount: 12000,
+        paymentAccountId: 'acc_kbank',
+        createdAt: d.toISOString()
+      },
+      {
+        id: `exp_hist_${mStr}_wages`,
+        date: `${mStr}-28`,
+        month: mStr,
+        isMonthlyFixed: true,
+        categoryId: 'exp_wages',
+        categoryName: 'เงินเดือนและค่าจ้างพนักงาน',
+        costType: 'fixed',
+        title: `เงินเดือนพ่อครัวและผู้ช่วย 2 คน`,
+        amount: 22000,
+        paymentAccountId: 'acc_kbank',
+        createdAt: d.toISOString()
+      },
+      {
+        id: `exp_hist_${mStr}_util`,
+        date: `${mStr}-15`,
+        month: mStr,
+        isMonthlyFixed: true,
+        categoryId: 'exp_utilities',
+        categoryName: 'ค่าน้ำประปา / ไฟฟ้า / อินเทอร์เน็ต',
+        costType: 'fixed',
+        title: `ค่าน้ำ-ค่าไฟ-เน็ตประจำร้าน`,
+        amount: 5400 + Math.round((offset % 3) * 200),
+        paymentAccountId: 'acc_kbank',
+        createdAt: d.toISOString()
+      },
+      {
+        id: `exp_hist_${mStr}_pack`,
+        date: `${mStr}-08`,
+        month: mStr,
+        categoryId: 'exp_packaging',
+        categoryName: 'ต้นทุนบรรจุภัณฑ์ (Packaging)',
+        costType: 'variable',
+        title: `กล่องข้าวกระดาษ ถุงหิ้ว ช้อนส้อม`,
+        amount: Math.round(grossBase * 0.033),
+        paymentAccountId: 'acc_kbank',
+        createdAt: d.toISOString()
+      },
+      {
+        id: `exp_hist_${mStr}_gas`,
+        date: `${mStr}-16`,
+        month: mStr,
+        categoryId: 'exp_gas_ice',
+        categoryName: 'ค่าแก๊สหุงต้ม / น้ำแข็ง',
+        costType: 'variable',
+        title: `แก๊สถัง 15 กก. 4 ถัง + น้ำแข็งหลอด`,
+        amount: Math.round(grossBase * 0.024),
+        paymentAccountId: 'acc_drawer_cash',
+        createdAt: d.toISOString()
+      }
+    );
+  });
+
+  return { incomes, expenses, cogsRecords };
+}
+
+const initialSeedTransactions = generateHistoricalSeedRecords();
 
 /**
  * ข้อมูลเริ่มต้น (Default Starter Data) สำหรับร้านอาหารใหม่
@@ -417,138 +810,9 @@ export const DEFAULT_RESTAURANT_DATA: RestaurantData = {
       notes: 'เมนูทำกำไรสูง (Margin 74.4% เป็น Star Item)'
     }
   ],
-  incomes: [
-    {
-      id: 'inc_sample_1',
-      date: new Date().toISOString().split('T')[0],
-      time: '12:15',
-      channelId: 'channel_dine_in',
-      channelName: 'หน้าร้าน (Dine-in / รับที่ร้าน)',
-      grossAmount: 3250,
-      commissionRatePercent: 0,
-      commissionAmount: 0,
-      netAmount: 3250,
-      paymentAccountId: 'acc_drawer_cash',
-      orderCount: 42,
-      notes: 'ยอดขายหน้าร้านรอบเที่ยง',
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: 'inc_sample_2',
-      date: new Date().toISOString().split('T')[0],
-      time: '13:00',
-      channelId: 'channel_lineman',
-      channelName: 'LINE MAN',
-      grossAmount: 2450,
-      commissionRatePercent: 32.1,
-      commissionAmount: 786.45,
-      netAmount: 1663.55,
-      paymentAccountId: 'acc_delivery_wallet',
-      orderCount: 22,
-      notes: 'ออเดอร์ LINE MAN มื้อเที่ยง',
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: 'inc_sample_3',
-      date: new Date().toISOString().split('T')[0],
-      time: '14:20',
-      channelId: 'channel_grab',
-      channelName: 'GrabFood',
-      grossAmount: 1890,
-      commissionRatePercent: 32.1,
-      commissionAmount: 606.69,
-      netAmount: 1283.31,
-      paymentAccountId: 'acc_delivery_wallet',
-      orderCount: 16,
-      notes: 'ออเดอร์ GrabFood ช่วงบ่าย',
-      createdAt: new Date().toISOString()
-    }
-  ],
-  expenses: [
-    {
-      id: 'exp_sample_1',
-      date: new Date().toISOString().split('T')[0],
-      categoryId: 'exp_raw_material',
-      categoryName: 'ต้นทุนวัตถุดิบอาหารและเครื่องปรุง (Food Cost)',
-      costType: 'variable',
-      title: 'ซื้อเนื้อหมู ไข่ไก่ ผักสด ตลาดเช้า',
-      amount: 1850,
-      paymentAccountId: 'acc_drawer_cash',
-      supplier: 'ตลาดสดเทศบาล',
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: 'exp_sample_2',
-      date: new Date().toISOString().split('T')[0],
-      categoryId: 'exp_packaging',
-      categoryName: 'ต้นทุนบรรจุภัณฑ์ (Packaging)',
-      costType: 'variable',
-      title: 'ซื้อกล่องข้าวกระดาษ 2 ลัง + ช้อนพลาสติก',
-      amount: 620,
-      paymentAccountId: 'acc_kbank',
-      supplier: 'แม็คโคร',
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: 'exp_sample_3',
-      date: new Date().toISOString().split('T')[0],
-      categoryId: 'exp_rent',
-      categoryName: 'ค่าเช่าสถานที่ / ค่าแผง',
-      costType: 'fixed',
-      isMonthlyFixed: true,
-      month: new Date().toISOString().substring(0, 7),
-      title: 'ค่าเช่าร้านประจำเดือน',
-      amount: 12000,
-      paymentAccountId: 'acc_kbank',
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: 'exp_sample_4',
-      date: new Date().toISOString().split('T')[0],
-      categoryId: 'exp_gas_ice',
-      categoryName: 'ค่าแก๊สหุงต้ม / น้ำแข็ง',
-      costType: 'variable',
-      title: 'สั่งแก๊ส ปตท. 15 กก. 1 ถัง + น้ำแข็งหลอด',
-      amount: 520,
-      paymentAccountId: 'acc_drawer_cash',
-      createdAt: new Date().toISOString()
-    }
-  ],
-  cogsRecords: [
-    {
-      id: 'cogs_sample_1',
-      date: new Date().toISOString().split('T')[0],
-      periodType: 'daily',
-      category: 'เนื้อสัตว์',
-      title: 'หมูสับ 10 กก. + อกไก่สด',
-      amount: 1450,
-      supplier: 'เขียงหมูป้าพร',
-      notes: 'เนื้อสัตว์สำหรับรอบเช้า',
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: 'cogs_sample_2',
-      date: new Date().toISOString().split('T')[0],
-      periodType: 'daily',
-      category: 'ผัก',
-      title: 'กะเพรา พริกขี้หนู แตงกวา ต้นหอม',
-      amount: 320,
-      supplier: 'ร้านผักสดลุงหมาย',
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: 'cogs_sample_3',
-      date: new Date().toISOString().split('T')[0],
-      periodType: 'weekly',
-      weekEndDate: new Date().toISOString().split('T')[0],
-      category: 'ของแห้ง',
-      title: 'ข้าวหอมมะลิ 2 กระสอบ (100 กก.)',
-      amount: 3200,
-      supplier: 'โรงสีข้าวเจริญผล',
-      notes: 'สต็อกสำหรับ 1-2 สัปดาห์',
-      createdAt: new Date().toISOString()
-    }
-  ],
+  incomes: initialSeedTransactions.incomes,
+  expenses: initialSeedTransactions.expenses,
+  cogsRecords: initialSeedTransactions.cogsRecords,
   cashFlows: [
     {
       id: 'cf_sample_1',
@@ -595,6 +859,24 @@ export function loadRestaurantData(): RestaurantData {
       parsed.cogsRecords = DEFAULT_RESTAURANT_DATA.cogsRecords || [];
     }
 
+    // เติมข้อมูลประวัติ 12 เดือนให้ครบถ้วนหากข้อมูลมีจำนวนน้อย
+    if (parsed.incomes.length < 15) {
+      const histSeed = generateHistoricalSeedRecords();
+      const existingIncomeIds = new Set(parsed.incomes.map((i: any) => i.id));
+      const extraIncomes = histSeed.incomes.filter(i => !existingIncomeIds.has(i.id));
+      parsed.incomes = [...parsed.incomes, ...extraIncomes];
+
+      const existingExpIds = new Set((parsed.expenses || []).map((e: any) => e.id));
+      const extraExpenses = histSeed.expenses.filter(e => !existingExpIds.has(e.id));
+      parsed.expenses = [...(parsed.expenses || []), ...extraExpenses];
+
+      const existingCogsIds = new Set((parsed.cogsRecords || []).map((c: any) => c.id));
+      const extraCogs = histSeed.cogsRecords.filter(c => !existingCogsIds.has(c.id));
+      parsed.cogsRecords = [...(parsed.cogsRecords || []), ...extraCogs];
+
+      saveRestaurantData(parsed);
+    }
+
     return parsed as RestaurantData;
   } catch (err) {
     console.error('Error loading restaurant data from localStorage:', err);
@@ -623,8 +905,17 @@ export function saveRestaurantData(data: RestaurantData): boolean {
  * รีเซ็ตข้อมูลทั้งหมดกลับเป็นค่าเริ่มต้น
  */
 export function resetRestaurantData(): RestaurantData {
-  saveRestaurantData(DEFAULT_RESTAURANT_DATA);
-  return DEFAULT_RESTAURANT_DATA;
+  const freshTransactions = generateHistoricalSeedRecords();
+  const freshData: RestaurantData = {
+    ...DEFAULT_RESTAURANT_DATA,
+    incomes: freshTransactions.incomes,
+    expenses: freshTransactions.expenses,
+    cogsRecords: freshTransactions.cogsRecords,
+    exportDate: new Date().toISOString(),
+    lastUpdated: new Date().toISOString()
+  };
+  saveRestaurantData(freshData);
+  return freshData;
 }
 
 /**

@@ -636,6 +636,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate }) => {
             </ComposedChart>
           </ResponsiveContainer>
         </div>
+
+        <div className="mt-3 pt-3 border-t border-stone-100 flex items-center justify-between">
+          <span className="text-[11px] text-stone-500">
+            วิเคราะห์ย้อนหลัง 12 เดือนและแยกต้นทุนคงที่/ผันแปร
+          </span>
+          <button
+            onClick={() => onNavigate('reports')}
+            className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 flex items-center gap-1"
+          >
+            ดูรายงานงบกำไร-ขาดทุน (P&L) แบบละเอียด <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
       </section>
 
       {/* 1. สรุปยอดขายวันนี้และเดือนนี้ แยกตามช่องทาง (หน้าร้าน / เดลิเวอรี่แต่ละแพลตฟอร์ม) */}

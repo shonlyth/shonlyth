@@ -35,7 +35,7 @@ function RestaurantApp() {
       <Header currentTabName={currentTabName} />
 
       {/* เนื้อหาหน้าจอตามแท็บที่เลือก (Mobile-first responsive container) */}
-      <main className="flex-1 max-w-md md:max-w-4xl w-full mx-auto px-3.5 sm:px-6 pt-4 pb-24">
+      <main className="flex-1 max-w-md md:max-w-4xl w-full mx-auto px-3.5 sm:px-6 pt-4 pb-24 print:p-0 print:m-0 print:max-w-none">
         {currentTab === 'dashboard' && (
           <DashboardView onNavigate={(tab) => setCurrentTab(tab)} />
         )}

@@ -21,7 +21,7 @@ export const Header: React.FC<HeaderProps> = ({ currentTabName }) => {
   }).format(new Date());
 
   return (
-    <header className="sticky top-0 z-30 bg-white border-b border-stone-200 shadow-xs">
+    <header className="sticky top-0 z-30 bg-white border-b border-stone-200 shadow-xs print:hidden">
       <div className="max-w-4xl mx-auto px-4 py-2.5 flex items-center justify-between">
         {/* ชื่อร้านและสาขา */}
         <div className="flex items-center gap-2.5 min-w-0">
