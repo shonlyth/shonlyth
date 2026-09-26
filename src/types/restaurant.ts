@@ -159,6 +159,7 @@ export interface RestaurantSettings {
   currency: string;             // สัญลักษณ์เงิน เช่น "฿"
   targetDailySales: number;     // เป้าหมายยอดขายต่อวัน (บาท)
   targetFoodCostPercent: number;// เป้าหมาย Food Cost เฉลี่ยร้าน (%)
+  foodCostAlertThresholdPercent: number; // เกณฑ์ % แจ้งเตือนเมื่อ Food Cost สูงกว่าเดือนก่อน (เช่น 5%)
   salesChannels: SalesChannel[];// แพลตฟอร์ม/ช่องทางการขายทั้งหมดพร้อม % GP
   paymentAccounts: PaymentAccount[]; // บัญชีการเงินในร้าน
   expenseCategories: ExpenseCategory[]; // หมวดหมู่ค่าใช้จ่าย

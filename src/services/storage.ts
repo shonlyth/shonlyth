@@ -25,6 +25,7 @@ export const DEFAULT_RESTAURANT_DATA: RestaurantData = {
     currency: '฿',
     targetDailySales: 8000,
     targetFoodCostPercent: 32,
+    foodCostAlertThresholdPercent: 5, // แจ้งเตือนเมื่อ food cost % เดือนนี้สูงกว่าเดือนก่อนเกิน 5%
     categoriesList: ['อาหารจานเดียว', 'ต้ม-แกง', 'ของทานเล่น', 'เครื่องดื่ม'],
     cogsCategories: ['เนื้อสัตว์', 'ผัก', 'เครื่องปรุง', 'ของแห้ง', 'อาหารทะเล', 'อื่นๆ'],
     salesChannels: [
@@ -444,6 +445,9 @@ export function loadRestaurantData(): RestaurantData {
     // เติมฟิลด์ที่อาจยังไม่มีจากเวอร์ชันก่อนหน้า
     if (!Array.isArray(parsed.settings.cogsCategories)) {
       parsed.settings.cogsCategories = DEFAULT_RESTAURANT_DATA.settings.cogsCategories;
+    }
+    if (typeof parsed.settings.foodCostAlertThresholdPercent !== 'number') {
+      parsed.settings.foodCostAlertThresholdPercent = 5;
     }
     if (!Array.isArray(parsed.cogsRecords)) {
       parsed.cogsRecords = DEFAULT_RESTAURANT_DATA.cogsRecords || [];

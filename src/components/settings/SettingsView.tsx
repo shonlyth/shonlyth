@@ -45,6 +45,9 @@ export const SettingsView: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState(data.settings.phoneNumber);
   const [targetDailySales, setTargetDailySales] = useState(data.settings.targetDailySales);
   const [targetFoodCostPercent, setTargetFoodCostPercent] = useState(data.settings.targetFoodCostPercent);
+  const [foodCostAlertThresholdPercent, setFoodCostAlertThresholdPercent] = useState(
+    data.settings.foodCostAlertThresholdPercent ?? 5
+  );
 
   // สถานะการแจ้งเตือน
   const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
@@ -71,7 +74,8 @@ export const SettingsView: React.FC = () => {
       ownerName,
       phoneNumber,
       targetDailySales: Number(targetDailySales) || 0,
-      targetFoodCostPercent: Number(targetFoodCostPercent) || 30
+      targetFoodCostPercent: Number(targetFoodCostPercent) || 30,
+      foodCostAlertThresholdPercent: Number(foodCostAlertThresholdPercent) || 5
     });
     setSaveSuccessMsg('บันทึกข้อมูลร้านเรียบร้อยแล้ว');
     setTimeout(() => setSaveSuccessMsg(null), 3000);
@@ -249,6 +253,27 @@ export const SettingsView: React.FC = () => {
                 onChange={(e) => setTargetFoodCostPercent(Number(e.target.value))}
                 className="w-full px-3 py-2 text-sm rounded-lg border border-stone-300 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
               />
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-stone-700 mb-1">
+                เกณฑ์เตือน Food Cost % สูงกว่าเดือนก่อน (%)
+              </label>
+              <div className="flex items-center gap-1">
+                <input
+                  type="number"
+                  min="1"
+                  max="50"
+                  step="1"
+                  value={foodCostAlertThresholdPercent}
+                  onChange={(e) => setFoodCostAlertThresholdPercent(Number(e.target.value))}
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-stone-300 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
+                />
+                <span className="text-xs text-stone-500 font-medium">%</span>
+              </div>
+              <p className="text-[10px] text-stone-400 mt-0.5">
+                เตือนบนหน้า Dashboard เมื่อ % Food Cost เดือนนี้พุ่งสูงกว่าเดือนก่อนเกินค่านี้
+              </p>
             </div>
           </div>
 
