@@ -19,6 +19,7 @@ import { CogsView } from './components/cogs/CogsView';
 import { ExpenseView } from './components/expenses/ExpenseView';
 import { MenuView } from './components/menu/MenuView';
 import { ReportView } from './components/reports/ReportView';
+import { BreakevenView } from './components/breakeven/BreakevenView';
 import { SettingsView } from './components/settings/SettingsView';
 
 function RestaurantApp() {
@@ -43,7 +44,8 @@ function RestaurantApp() {
         {currentTab === 'cogs' && <CogsView />}
         {currentTab === 'menu' && <MenuView />}
         {currentTab === 'expenses' && <ExpenseView />}
-        {currentTab === 'reports' && <ReportView />}
+        {currentTab === 'reports' && <ReportView onNavigate={(tab) => setCurrentTab(tab)} />}
+        {currentTab === 'breakeven' && <BreakevenView onNavigate={(tab) => setCurrentTab(tab)} />}
         {currentTab === 'settings' && <SettingsView />}
       </main>
 
