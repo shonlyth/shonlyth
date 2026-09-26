@@ -41,6 +41,7 @@ function RestaurantApp() {
         )}
         {currentTab === 'income' && <IncomeView />}
         {currentTab === 'cogs' && <CogsView />}
+        {currentTab === 'menu' && <MenuView />}
         {currentTab === 'expenses' && <ExpenseView />}
         {currentTab === 'reports' && <ReportView />}
         {currentTab === 'settings' && <SettingsView />}

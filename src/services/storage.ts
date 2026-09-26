@@ -26,6 +26,7 @@ export const DEFAULT_RESTAURANT_DATA: RestaurantData = {
     targetDailySales: 8000,
     targetFoodCostPercent: 32,
     foodCostAlertThresholdPercent: 5, // แจ้งเตือนเมื่อ food cost % เดือนนี้สูงกว่าเดือนก่อนเกิน 5%
+    minMarginAlertThresholdPercent: 60, // เกณฑ์ % Margin ขั้นต่ำที่ต้องการ หากต่ำกว่า 60% ให้เตือน
     categoriesList: ['อาหารจานเดียว', 'ต้ม-แกง', 'ของทานเล่น', 'เครื่องดื่ม'],
     cogsCategories: ['เนื้อสัตว์', 'ผัก', 'เครื่องปรุง', 'ของแห้ง', 'อาหารทะเล', 'อื่นๆ'],
     salesChannels: [
@@ -169,6 +170,7 @@ export const DEFAULT_RESTAURANT_DATA: RestaurantData = {
     {
       id: 'ing_1',
       name: 'หมูสับ',
+      category: 'เนื้อสัตว์',
       unit: 'กก.',
       unitCost: 150,
       currentStock: 5,
@@ -179,6 +181,7 @@ export const DEFAULT_RESTAURANT_DATA: RestaurantData = {
     {
       id: 'ing_2',
       name: 'ไข่ไก่ เบอร์ 2',
+      category: 'ของแห้ง',
       unit: 'ฟอง',
       unitCost: 4.2,
       currentStock: 60,
@@ -189,6 +192,7 @@ export const DEFAULT_RESTAURANT_DATA: RestaurantData = {
     {
       id: 'ing_3',
       name: 'ใบกะเพราและพริกกระเทียม',
+      category: 'ผัก',
       unit: 'ชุด',
       unitCost: 3.5,
       currentStock: 50,
@@ -199,6 +203,7 @@ export const DEFAULT_RESTAURANT_DATA: RestaurantData = {
     {
       id: 'ing_4',
       name: 'ข้าวสวยหอมมะลิ (หุงแล้ว)',
+      category: 'ของแห้ง',
       unit: 'จาน (200g)',
       unitCost: 4.0,
       currentStock: 100,
@@ -209,6 +214,7 @@ export const DEFAULT_RESTAURANT_DATA: RestaurantData = {
     {
       id: 'ing_5',
       name: 'ซอสผัดกะเพราปรุงสำเร็จ',
+      category: 'เครื่องปรุง',
       unit: 'ช้อนโต๊ะ',
       unitCost: 2.0,
       currentStock: 200,
@@ -219,6 +225,7 @@ export const DEFAULT_RESTAURANT_DATA: RestaurantData = {
     {
       id: 'ing_6',
       name: 'กล่องข้าวกระดาษคราฟท์ + ช้อน',
+      category: 'ของแห้ง',
       unit: 'ชุด',
       unitCost: 3.8,
       currentStock: 150,
@@ -272,10 +279,142 @@ export const DEFAULT_RESTAURANT_DATA: RestaurantData = {
         }
       ],
       packagingCost: 3.8,
-      totalCostPerDish: 32.5, // 15 + 4.2 + 3.5 + 4 + 2 + 3.8 = 32.5 บ.
+      totalCostPerDish: 28.7, // 15 + 4.2 + 3.5 + 4 + 2 = 28.7 บ.
       targetFoodCostPercent: 35,
       isActive: true,
-      notes: 'เมนูขายดีประจำร้าน'
+      notes: 'เมนูขายดีประจำร้าน (Margin 55.8% - ต่ำกว่าเกณฑ์ 60%)'
+    },
+    {
+      id: 'menu_2',
+      name: 'ต้มยำกุ้งน้ำข้น (ชาม)',
+      category: 'ต้ม-แกง',
+      dineInPrice: 150,
+      deliveryPrice: 180,
+      recipe: [
+        {
+          ingredientId: 'ing_seafood',
+          ingredientName: 'กุ้งขาวสด (150g)',
+          category: 'อาหารทะเล',
+          quantity: 0.15,
+          unit: 'กก.',
+          unitCost: 280,
+          costPerServing: 42.0
+        },
+        {
+          ingredientId: 'ing_herbs',
+          ingredientName: 'ชุดเครื่องต้มยำ (ข่า ตะไคร้ ใบมะกรูด เห็ด)',
+          category: 'ผัก',
+          quantity: 1,
+          unit: 'ชุด',
+          unitCost: 15,
+          costPerServing: 15.0
+        },
+        {
+          ingredientId: 'ing_seasoning',
+          ingredientName: 'น้ำพริกเผา + นมสด + มะนาว',
+          category: 'เครื่องปรุง',
+          quantity: 1,
+          unit: 'ชุด',
+          unitCost: 12,
+          costPerServing: 12.0
+        }
+      ],
+      packagingCost: 4.5,
+      totalCostPerDish: 73.5, // 42 + 15 + 12 + 4.5 = 73.5 บ.
+      targetFoodCostPercent: 40,
+      isActive: true,
+      notes: 'ต้นทุนกุ้งสดสูง ทำให้ Margin อยู่ที่ 51.0% (ต่ำกว่าเกณฑ์ 60% ควรปรับราคา)'
+    },
+    {
+      id: 'menu_3',
+      name: 'ข้าวผัดหมูใส่ไข่',
+      category: 'อาหารจานเดียว',
+      dineInPrice: 65,
+      deliveryPrice: 80,
+      recipe: [
+        {
+          ingredientId: 'ing_1',
+          ingredientName: 'หมูสันนอก (60g)',
+          category: 'เนื้อสัตว์',
+          quantity: 0.06,
+          unit: 'กก.',
+          unitCost: 150,
+          costPerServing: 9.0
+        },
+        {
+          ingredientId: 'ing_2',
+          ingredientName: 'ไข่ไก่ เบอร์ 2',
+          category: 'ของแห้ง',
+          quantity: 1,
+          unit: 'ฟอง',
+          unitCost: 4.2,
+          costPerServing: 4.2
+        },
+        {
+          ingredientId: 'ing_4',
+          ingredientName: 'ข้าวสวยหอมมะลิ',
+          category: 'ของแห้ง',
+          quantity: 1,
+          unit: 'จาน',
+          unitCost: 4.0,
+          costPerServing: 4.0
+        },
+        {
+          ingredientId: 'ing_veg',
+          ingredientName: 'คะน้า มะเขือเทศ หอมใหญ่ ต้นหอม',
+          category: 'ผัก',
+          quantity: 1,
+          unit: 'ชุด',
+          unitCost: 3.5,
+          costPerServing: 3.5
+        }
+      ],
+      packagingCost: 3.8,
+      totalCostPerDish: 24.5, // 9 + 4.2 + 4 + 3.5 + 3.8 = 24.5 บ.
+      targetFoodCostPercent: 32,
+      isActive: true,
+      notes: 'Margin 62.3% (ผ่านเกณฑ์มาตรฐาน)'
+    },
+    {
+      id: 'menu_4',
+      name: 'ชาไทยเย็นโบราณ',
+      category: 'เครื่องดื่ม',
+      dineInPrice: 45,
+      deliveryPrice: 55,
+      recipe: [
+        {
+          ingredientId: 'ing_tea',
+          ingredientName: 'ผงชาไทยตรามือ',
+          category: 'ของแห้ง',
+          quantity: 1,
+          unit: 'ช็อต',
+          unitCost: 3.5,
+          costPerServing: 3.5
+        },
+        {
+          ingredientId: 'ing_milk',
+          ingredientName: 'นมข้นหวาน + นมสด',
+          category: 'เครื่องปรุง',
+          quantity: 1,
+          unit: 'แก้ว',
+          unitCost: 4.5,
+          costPerServing: 4.5
+        },
+        {
+          ingredientId: 'ing_ice',
+          ingredientName: 'น้ำแข็งหลอด + แก้วฝาฮาล์ฟ',
+          category: 'ของแห้ง',
+          quantity: 1,
+          unit: 'ชุด',
+          unitCost: 3.5,
+          costPerServing: 3.5
+        }
+      ],
+      packagingCost: 0,
+      totalCostPerDish: 11.5,
+      targetFoodCostPercent: 25,
+      isActive: true,
+      notes: 'เมนูทำกำไรสูง (Margin 74.4% เป็น Star Item)'
     }
   ],
   incomes: [
@@ -448,6 +587,9 @@ export function loadRestaurantData(): RestaurantData {
     }
     if (typeof parsed.settings.foodCostAlertThresholdPercent !== 'number') {
       parsed.settings.foodCostAlertThresholdPercent = 5;
+    }
+    if (typeof parsed.settings.minMarginAlertThresholdPercent !== 'number') {
+      parsed.settings.minMarginAlertThresholdPercent = 60;
     }
     if (!Array.isArray(parsed.cogsRecords)) {
       parsed.cogsRecords = DEFAULT_RESTAURANT_DATA.cogsRecords || [];

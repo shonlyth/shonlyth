@@ -48,6 +48,7 @@ export interface ExpenseCategory {
 export interface Ingredient {
   id: string;
   name: string;                 // ชื่อวัตถุดิบ เช่น "หมูสันนอก", "ไข่ไก่เบอร์ 2", "น้ำมันพืช", "ข้าวหอมมะลิ"
+  category?: string;            // หมวดหมู่วัตถุดิบ COGS เช่น "เนื้อสัตว์", "ผัก", "เครื่องปรุง", "ของแห้ง", "อื่นๆ"
   unit: string;                 // หน่วยนับ เช่น "กก.", "ฟอง", "ลิตร", "กรัม"
   unitCost: number;             // ต้นทุนต่อหน่วย (บาท)
   currentStock?: number;        // จำนวนคงเหลือในคลัง (ถ้าบันทึก)
@@ -59,10 +60,12 @@ export interface Ingredient {
 // วัตถุดิบในสูตรอาหาร 1 รายการ (Recipe Item)
 export interface RecipeItem {
   ingredientId: string;         // อ้างอิง ID ของ Ingredient
-  ingredientName: string;       // บันทึกชื่อไว้เพื่อความรวดเร็วในการแสดงผล
+  ingredientName: string;       // ชื่อวัตถุดิบ
+  category?: string;            // หมวดหมู่วัตถุดิบ เช่น "เนื้อสัตว์", "ผัก", "เครื่องปรุง", "ของแห้ง", "อื่นๆ"
   quantity: number;             // ปริมาณที่ใช้ต่อ 1 เสิร์ฟ/จาน
-  unit: string;                 // หน่วยที่ใช้ เช่น "กรัม", "ฟอง"
-  costPerServing: number;       // ต้นทุนคำนวณต่อเสิร์ฟ (บาท)
+  unit: string;                 // หน่วยที่ใช้ เช่น "กก.", "กรัม", "ฟอง", "ช้อนโต๊ะ"
+  unitCost?: number;            // ราคาต่อหน่วย (บาท)
+  costPerServing: number;       // ต้นทุนคำนวณต่อเสิร์ฟ (บาท) = quantity * unitCost
 }
 
 // เมนูอาหารและสูตรต้นทุน (Menu Item & Recipe)
@@ -160,6 +163,7 @@ export interface RestaurantSettings {
   targetDailySales: number;     // เป้าหมายยอดขายต่อวัน (บาท)
   targetFoodCostPercent: number;// เป้าหมาย Food Cost เฉลี่ยร้าน (%)
   foodCostAlertThresholdPercent: number; // เกณฑ์ % แจ้งเตือนเมื่อ Food Cost สูงกว่าเดือนก่อน (เช่น 5%)
+  minMarginAlertThresholdPercent: number;// เกณฑ์ % กำไรขั้นต่ำ (Margin) ของเมนูอาหารที่ต้องเตือน (เช่น 60%)
   salesChannels: SalesChannel[];// แพลตฟอร์ม/ช่องทางการขายทั้งหมดพร้อม % GP
   paymentAccounts: PaymentAccount[]; // บัญชีการเงินในร้าน
   expenseCategories: ExpenseCategory[]; // หมวดหมู่ค่าใช้จ่าย

@@ -37,7 +37,8 @@ import {
   Sparkles,
   Layers,
   ChevronRight,
-  UtensilsCrossed
+  UtensilsCrossed,
+  ChefHat
 } from 'lucide-react';
 
 interface DashboardViewProps {
@@ -123,6 +124,36 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate }) => {
     prevMonthFoodCostPercent > 0 &&
     monthFoodCostPercent > 0 &&
     foodCostDiff >= alertThreshold;
+
+  // =========================================================================
+  // Recipe Costing: เมนูที่ Margin ต่ำกว่าเกณฑ์ (Min Margin Alert)
+  // =========================================================================
+  const minMarginThreshold = settings.minMarginAlertThresholdPercent ?? 60;
+  const lowMarginMenus = useMemo(() => {
+    return (data.menuItems || [])
+      .map((item) => {
+        const price = item.dineInPrice || 0;
+        const cost = item.totalCostPerDish || 0;
+        const profit = price - cost;
+        const margin = price > 0 ? (profit / price) * 100 : 0;
+        const targetMarginDecimal = minMarginThreshold / 100;
+        const suggestedPrice = targetMarginDecimal < 1
+          ? Math.ceil(cost / (1 - targetMarginDecimal))
+          : price;
+
+        return {
+          ...item,
+          cost,
+          price,
+          profit,
+          margin,
+          isLowMargin: margin < minMarginThreshold,
+          suggestedPrice
+        };
+      })
+      .filter((m) => m.isLowMargin)
+      .sort((a, b) => a.margin - b.margin); // เรียงจาก Margin ต่ำสุดขึ้นมา
+  }, [data.menuItems, minMarginThreshold]);
 
   // =========================================================================
   // 1. ยอดขายแยกตามช่องทาง (วันนี้ / เดือนนี้)
@@ -362,6 +393,91 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate }) => {
             className="text-[11px] text-emerald-700 hover:underline shrink-0"
           >
             เกณฑ์: {alertThreshold}%
+          </button>
+        </div>
+      )}
+
+      {/* 5. Widget เตือนเมื่อมีเมนูที่ Margin ต่ำกว่าเกณฑ์ (Recipe Costing Alert) */}
+      {lowMarginMenus.length > 0 ? (
+        <section className="bg-gradient-to-r from-rose-50 to-amber-50 border-2 border-rose-300 p-4 rounded-2xl shadow-xs space-y-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-rose-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+                <ChefHat className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xs font-bold text-rose-950 uppercase tracking-wide">
+                    พบเมนูที่ Margin ต่ำกว่าเกณฑ์ ({lowMarginMenus.length} เมนู)
+                  </h3>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-200 text-rose-900 font-bold">
+                    เกณฑ์ &lt; {minMarginThreshold}%
+                  </span>
+                </div>
+                <p className="text-[11px] text-rose-900/90 mt-0.5">
+                  เมนูเหล่านี้มีอัตรากำไรต่อจานต่ำกว่าเป้าหมาย แนะนำปรับราคาขายหรือลดสัดส่วนต้นทุนวัตถุดิบ
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => onNavigate('menu')}
+              className="text-xs font-bold text-rose-700 hover:text-rose-900 flex items-center gap-1 shrink-0 bg-white px-2.5 py-1 rounded-lg border border-rose-200 shadow-2xs"
+            >
+              ปรับสูตร/ราคา <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* รายการเมนูที่ตกเกณฑ์ */}
+          <div className="divide-y divide-rose-200/70 border border-rose-200 rounded-xl bg-white overflow-hidden text-xs">
+            {lowMarginMenus.slice(0, 3).map((item) => (
+              <div key={item.id} className="p-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-rose-50/40">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-stone-900">{item.name}</span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-stone-100 text-stone-600">
+                    {item.category}
+                  </span>
+                  <span className="text-[10px] text-stone-500">
+                    (ขาย ฿{item.price} • ต้นทุน ฿{item.cost.toFixed(2)})
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2.5 self-end sm:self-auto">
+                  <span className="font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-md border border-red-200 text-[11px]">
+                    Margin {item.margin.toFixed(1)}%
+                  </span>
+                  <span className="text-[11px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 font-medium">
+                    แนะนำขาย ฿{item.suggestedPrice}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {lowMarginMenus.length > 3 && (
+            <div className="text-right">
+              <button
+                onClick={() => onNavigate('menu')}
+                className="text-[11px] text-rose-800 font-semibold hover:underline"
+              >
+                + ดูอีก {lowMarginMenus.length - 3} เมนูในหน้าระบบ Recipe Costing
+              </button>
+            </div>
+          )}
+        </section>
+      ) : (
+        <div className="bg-emerald-50/70 border border-emerald-200 px-3.5 py-2.5 rounded-xl flex items-center justify-between text-xs text-emerald-900">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>
+              <strong>Recipe Costing:</strong> ทุกเมนูอาหารมี % Margin ผ่านเกณฑ์มาตรฐาน (&ge; {minMarginThreshold}%)
+            </span>
+          </div>
+          <button
+            onClick={() => onNavigate('menu')}
+            className="text-[11px] text-emerald-700 hover:underline shrink-0 font-medium"
+          >
+            ดูสูตรอาหารทั้งหมด
           </button>
         </div>
       )}

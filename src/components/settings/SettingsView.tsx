@@ -48,6 +48,9 @@ export const SettingsView: React.FC = () => {
   const [foodCostAlertThresholdPercent, setFoodCostAlertThresholdPercent] = useState(
     data.settings.foodCostAlertThresholdPercent ?? 5
   );
+  const [minMarginAlertThresholdPercent, setMinMarginAlertThresholdPercent] = useState(
+    data.settings.minMarginAlertThresholdPercent ?? 60
+  );
 
   // สถานะการแจ้งเตือน
   const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
@@ -75,7 +78,8 @@ export const SettingsView: React.FC = () => {
       phoneNumber,
       targetDailySales: Number(targetDailySales) || 0,
       targetFoodCostPercent: Number(targetFoodCostPercent) || 30,
-      foodCostAlertThresholdPercent: Number(foodCostAlertThresholdPercent) || 5
+      foodCostAlertThresholdPercent: Number(foodCostAlertThresholdPercent) || 5,
+      minMarginAlertThresholdPercent: Number(minMarginAlertThresholdPercent) || 60
     });
     setSaveSuccessMsg('บันทึกข้อมูลร้านเรียบร้อยแล้ว');
     setTimeout(() => setSaveSuccessMsg(null), 3000);
@@ -273,6 +277,27 @@ export const SettingsView: React.FC = () => {
               </div>
               <p className="text-[10px] text-stone-400 mt-0.5">
                 เตือนบนหน้า Dashboard เมื่อ % Food Cost เดือนนี้พุ่งสูงกว่าเดือนก่อนเกินค่านี้
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-stone-700 mb-1">
+                เกณฑ์แจ้งเตือนเมนู Margin ต่ำ (%)
+              </label>
+              <div className="flex items-center gap-1">
+                <input
+                  type="number"
+                  min="10"
+                  max="95"
+                  step="1"
+                  value={minMarginAlertThresholdPercent}
+                  onChange={(e) => setMinMarginAlertThresholdPercent(Number(e.target.value))}
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-stone-300 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
+                />
+                <span className="text-xs text-stone-500 font-medium">%</span>
+              </div>
+              <p className="text-[10px] text-stone-400 mt-0.5">
+                ไฮไลต์และเตือนเมนูที่มี % กำไร (Margin) ต่ำกว่าค่านี้ (เช่น เตือนเมื่อต่ำกว่า 60%)
               </p>
             </div>
           </div>

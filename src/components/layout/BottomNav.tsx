@@ -14,12 +14,12 @@ import {
   LayoutDashboard,
   TrendingUp,
   ShoppingCart,
+  ChefHat,
   TrendingDown,
-  BarChart3,
   Settings
 } from 'lucide-react';
 
-export type TabType = 'dashboard' | 'income' | 'cogs' | 'expenses' | 'reports' | 'settings';
+export type TabType = 'dashboard' | 'income' | 'cogs' | 'menu' | 'expenses' | 'settings' | 'reports';
 
 interface BottomNavProps {
   currentTab: TabType;
@@ -28,10 +28,10 @@ interface BottomNavProps {
 
 export const NAV_ITEMS = [
   { id: 'dashboard' as TabType, label: 'หน้าหลัก', icon: LayoutDashboard },
-  { id: 'income' as TabType, label: 'รายรับรายวัน', icon: TrendingUp },
-  { id: 'cogs' as TabType, label: 'ต้นทุนขาย COGS', icon: ShoppingCart },
+  { id: 'income' as TabType, label: 'รายรับ', icon: TrendingUp },
+  { id: 'cogs' as TabType, label: 'ต้นทุน COGS', icon: ShoppingCart },
+  { id: 'menu' as TabType, label: 'เมนู & สูตร', icon: ChefHat },
   { id: 'expenses' as TabType, label: 'ค่าใช้จ่าย', icon: TrendingDown },
-  { id: 'reports' as TabType, label: 'รายงาน', icon: BarChart3 },
   { id: 'settings' as TabType, label: 'ตั้งค่า', icon: Settings },
 ];
 
