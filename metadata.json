@@ -1,0 +1,6 @@
+{
+  "name": "KinKhorng - ระบบบัญชีร้านอาหาร",
+  "description": "เว็บแอปบันทึกบัญชีรายรับ-รายจ่าย-กำไรขาดทุน สำหรับเจ้าของร้านอาหาร รองรับคำนวณ GP เดลิเวอรี่ และจัดการต้นทุนสูตรอาหาร",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

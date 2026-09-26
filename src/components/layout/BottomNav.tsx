@@ -1,0 +1,74 @@
+/**
+ * Navigation Component: เมนูนำทางแบบ Mobile-First
+ * รองรับเมนูหลัก:
+ * 1. หน้าหลัก (Dashboard)
+ * 2. บันทึกรายรับรายวัน (Income)
+ * 3. บันทึกต้นทุนขาย (COGS)
+ * 4. บันทึกค่าใช้จ่าย (Expenses)
+ * 5. รายงานกำไรขาดทุน (Reports)
+ * 6. ตั้งค่า (Settings)
+ */
+
+import React from 'react';
+import {
+  LayoutDashboard,
+  TrendingUp,
+  ShoppingCart,
+  TrendingDown,
+  BarChart3,
+  Settings
+} from 'lucide-react';
+
+export type TabType = 'dashboard' | 'income' | 'cogs' | 'expenses' | 'reports' | 'settings';
+
+interface BottomNavProps {
+  currentTab: TabType;
+  onSelectTab: (tab: TabType) => void;
+}
+
+export const NAV_ITEMS = [
+  { id: 'dashboard' as TabType, label: 'หน้าหลัก', icon: LayoutDashboard },
+  { id: 'income' as TabType, label: 'รายรับรายวัน', icon: TrendingUp },
+  { id: 'cogs' as TabType, label: 'ต้นทุนขาย COGS', icon: ShoppingCart },
+  { id: 'expenses' as TabType, label: 'ค่าใช้จ่าย', icon: TrendingDown },
+  { id: 'reports' as TabType, label: 'รายงาน', icon: BarChart3 },
+  { id: 'settings' as TabType, label: 'ตั้งค่า', icon: Settings },
+];
+
+export const BottomNav: React.FC<BottomNavProps> = ({ currentTab, onSelectTab }) => {
+  return (
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-stone-200 safe-area-bottom shadow-lg">
+      <div className="max-w-md md:max-w-4xl mx-auto px-1 sm:px-3">
+        <div className="grid grid-cols-6 h-15">
+          {NAV_ITEMS.map((item) => {
+            const Icon = item.icon;
+            const isActive = currentTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => onSelectTab(item.id)}
+                className={`flex flex-col items-center justify-center py-1 transition-colors relative ${
+                  isActive
+                    ? 'text-emerald-600 font-semibold'
+                    : 'text-stone-500 hover:text-stone-700'
+                }`}
+              >
+                {isActive && (
+                  <span className="absolute top-0 w-8 h-0.5 bg-emerald-600 rounded-full" />
+                )}
+                <Icon
+                  className={`w-4.5 h-4.5 mb-0.5 transition-transform ${
+                    isActive ? 'scale-110 text-emerald-600' : 'text-stone-500'
+                  }`}
+                />
+                <span className="text-[9.5px] sm:text-[11px] leading-tight tracking-tight text-center truncate px-0.5">
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </nav>
+  );
+};
